@@ -4,14 +4,15 @@ from send_mail import send_mail
 
 app = Flask(__name__)
 
-ENV = 'dev'
+ENV = 'prod'
 
 if ENV == 'dev':
     app.debug = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = ''
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://devtest:12345678@127.0.0.1/lexus'
+    app.config['SQLALCHEMY_DATABASE_URI']='mysql+pymysql://root:kornkorn@localhost:3306/test'
 else:
     app.debug = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = ''
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://sujxhippxxksof:827330776a90edc76c85b06d79519bbf86fce78a41b380c922a1bc04caa15395@ec2-34-233-114-40.compute-1.amazonaws.com:5432/dnldlo8m0f6cf'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -48,7 +49,8 @@ def submit():
         # print(customer, dealer, rating, comments)
         if customer == '' or dealer == '':
             return render_template('index.html', message='Please enter required fields')
-        if db.session.query(Feedback).filter(Feedback.customer == customer).count() == 0:
+        #Feedback is the model we are passing, if Feedback = 0 it means customer does not exist.    
+        if db.session.query(Feedback).filter(Feedback.customer == customer).count() == 0: 
             data = Feedback(customer, dealer, rating, comments)
             db.session.add(data)
             db.session.commit()
